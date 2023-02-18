@@ -116,7 +116,11 @@ enet_peer_send (ENetPeer * peer, enet_uint8 channelID, ENetPacket * packet)
      return -1;
 
    channel = & peer -> channels [channelID];
-   fragmentLength = peer -> mtu - sizeof (ENetProtocolHeader) - sizeof (ENetProtocolSendFragment);
+   if (peer->host->usingNewPacket == 2) {
+       fragmentLength = peer->mtu - sizeof(ENetProtocolHeaderUbisoft) - sizeof(ENetProtocolSendFragment);
+   } else {
+       fragmentLength = peer->mtu - sizeof(ENetProtocolHeader) - sizeof(ENetProtocolSendFragment);
+   }
    if (peer -> host -> checksum != NULL)
      fragmentLength -= sizeof(enet_uint32);
 
