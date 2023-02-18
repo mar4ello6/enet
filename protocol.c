@@ -1766,6 +1766,7 @@ enet_protocol_send_outgoing_commands (ENetHost * host, ENetEvent * event, int ch
         newHeader->integrity[1] = htons(rand1 ^ port);
         newHeader->integrity[2] = ntohs(rand2 & 0xF7DF | 0x9005);
     }
+
     int sentLength = 0;
     size_t shouldCompress = 0;
     ENetList sentUnreliableCommands;
@@ -1846,6 +1847,12 @@ enet_protocol_send_outgoing_commands (ENetHost * host, ENetEvent * event, int ch
                 header->sentTime = ENET_HOST_TO_NET_16(host->serviceTime & 0xFFFF);
 
             host -> buffers -> dataLength = packetSize;
+        } else {
+            if (useNew) {
+                host->buffers->dataLength = (size_t) & ((ENetProtocolHeaderUbisoft*)0)->sentTime;
+            } else {
+                host->buffers->dataLength = (size_t) & ((ENetProtocolHeader*)0)->sentTime;
+            }
         }
 
         shouldCompress = 0;
